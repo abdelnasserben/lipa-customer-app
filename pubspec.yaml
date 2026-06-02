@@ -1,0 +1,60 @@
+name: lipa_customer
+description: "Lipa — application mobile client (portefeuille, P2P, factures, cartes)."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # State management & DI
+  flutter_riverpod: ^2.6.1
+
+  # Networking
+  dio: ^5.7.0
+
+  # Routing
+  go_router: ^14.6.2
+
+  # Secure token storage
+  flutter_secure_storage: ^9.2.4
+
+  # Fonts (Bricolage Grotesque + DM Mono) fetched & cached at runtime
+  google_fonts: ^6.2.1
+
+  # Utilities
+  uuid: ^4.5.1
+  intl: ^0.20.2
+
+  # Transaction receipt: generate a PDF locally and open the system
+  # print/preview sheet (save/share), plus a native share sheet for text.
+  pdf: ^3.11.1
+  printing: ^5.13.3
+  share_plus: ^10.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+  # Generates Android/iOS launcher icons from a single source PNG.
+  # Dev-only: it does not ship in the built app.
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+
+# App launcher icon configuration.
+# Place your 1024×1024 PNG at: app/assets/icon/lipa_icon.png
+# then run:  flutter pub run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/lipa_icon.png"
+  remove_alpha_ios: true
+  # Background shown around the (transparent) icon on the iOS home screen.
+  background_color_ios: "#F6F4EF"
