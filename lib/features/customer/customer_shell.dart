@@ -201,7 +201,10 @@ class _Fab extends StatelessWidget {
                       offset: Offset(0, 8)),
                 ],
               ),
-              child: const Icon(Icons.send, color: Colors.white, size: 22),
+              child: Transform.rotate(
+                angle: -0.5,
+                child: const Icon(Icons.send, color: Colors.white, size: 22),
+              ),
             ),
           ),
           Transform.translate(

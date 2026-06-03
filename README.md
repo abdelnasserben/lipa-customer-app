@@ -50,17 +50,25 @@ L'environnement est choisi au build via `--dart-define=ENV=...` (défaut : `loca
 
 | ENV     | baseUrl par défaut                | Réseau ? |
 |---------|-----------------------------------|----------|
-| `local` | `http://10.0.2.2:8080`            | Oui — backend sur la machine de dev (alias émulateur Android) |
+| `local` | `http://localhost:8080`           | Oui — backend sur la machine de dev |
 | `prod`  | `https://api.lipa.km`             | Oui — API de production |
 
 On peut surcharger l'URL : `--dart-define=API_BASE_URL=https://...`.
 
+**Vrai device (USB)** : ouvre le tunnel avant de lancer, puis `localhost` marche :
+
 ```bash
-# Contre un backend local
-flutter run --dart-define=ENV=local --dart-define=API_BASE_URL=http://10.0.2.2:8080
+adb reverse tcp:8080 tcp:8080
+flutter run --dart-define=ENV=local
 
 # Build de production
 flutter build apk --release --dart-define=ENV=prod
+```
+
+**Émulateur sans `adb reverse`** : utilise l'alias loopback de l'émulateur :
+
+```bash
+flutter run --dart-define=ENV=local --dart-define=API_BASE_URL=http://10.0.2.2:8080
 ```
 
 ## Points de conformité à la spec

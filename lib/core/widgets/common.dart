@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../theme/app_theme.dart';
 import '../theme/app_tokens.dart';
@@ -276,8 +277,31 @@ class DetailRow extends StatelessWidget {
   final bool copy;
   final bool last;
 
+  Future<void> _copy(BuildContext context) async {
+    await Clipboard.setData(ClipboardData(text: value));
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text('$label copié'),
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final valueText = Text(
+      value,
+      textAlign: TextAlign.right,
+      overflow: TextOverflow.ellipsis,
+      style: mono
+          ? AppText.mono(size: 13.5, weight: FontWeight.w600)
+          : AppText.ui(size: 13.5, weight: FontWeight.w600),
+    );
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -290,27 +314,29 @@ class DetailRow extends StatelessWidget {
           Text(label, style: AppText.ui(size: 13, color: AppColors.inkMid)),
           const SizedBox(width: 12),
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Flexible(
-                  child: Text(
-                    value,
-                    textAlign: TextAlign.right,
-                    overflow: TextOverflow.ellipsis,
-                    style: mono
-                        ? AppText.mono(size: 13.5, weight: FontWeight.w600)
-                        : AppText.ui(size: 13.5, weight: FontWeight.w600),
+            child: copy
+                ? InkWell(
+                    onTap: () => _copy(context),
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Flexible(child: valueText),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 6),
+                            child: Icon(Icons.copy_rounded,
+                                size: 14, color: AppColors.inkLow),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [Flexible(child: valueText)],
                   ),
-                ),
-                if (copy)
-                  const Padding(
-                    padding: EdgeInsets.only(left: 6),
-                    child: Icon(Icons.copy_rounded,
-                        size: 14, color: AppColors.inkLow),
-                  ),
-              ],
-            ),
           ),
         ],
       ),
