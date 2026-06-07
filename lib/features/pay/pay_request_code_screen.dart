@@ -6,6 +6,7 @@ import '../../core/error/api_error.dart';
 import '../../core/providers.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_tokens.dart';
+import '../../core/utils/validators.dart';
 import '../../core/widgets/common.dart';
 import 'pay_request_screen.dart';
 
@@ -33,7 +34,7 @@ class _PayRequestCodeScreenState extends ConsumerState<PayRequestCodeScreen> {
   }
 
   Future<void> _lookup() async {
-    if (_value.length < 4) return;
+    if (!isValidShortCode(_value)) return;
     setState(() {
       _loading = true;
       _error = null;
@@ -121,7 +122,7 @@ class _PayRequestCodeScreenState extends ConsumerState<PayRequestCodeScreen> {
                     size: BtnSize.lg,
                     full: true,
                     loading: _loading,
-                    onPressed: _value.length >= 4 ? _lookup : null,
+                    onPressed: isValidShortCode(_value) ? _lookup : null,
                   ),
                 ],
               ),

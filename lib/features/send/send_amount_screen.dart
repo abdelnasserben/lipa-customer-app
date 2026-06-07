@@ -195,7 +195,7 @@ class _SendAmountScreenState extends ConsumerState<SendAmountScreen> {
                     label: 'Vérifier le transfert',
                     size: BtnSize.lg,
                     full: true,
-                    onPressed: _num > 0
+                    onPressed: (_num > 0 && !over)
                         ? () => Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (_) => SendConfirmScreen(

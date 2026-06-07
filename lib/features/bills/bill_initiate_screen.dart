@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/utils/formatters.dart';
+import '../../core/utils/validators.dart';
 import '../../core/widgets/common.dart';
 import '../../core/widgets/pin_sheet.dart';
 import '../../data/models/bill_payment.dart';
@@ -47,6 +48,9 @@ class _BillInitiateScreenState extends ConsumerState<BillInitiateScreen> {
 
   String? get _referenceError {
     if (_ref.isEmpty) return null;
+    if (_ref.length > kReferenceMaxLength) {
+      return 'La référence ne peut dépasser $kReferenceMaxLength caractères.';
+    }
     if (!widget.provider.referenceLooksValid(_ref)) {
       final ex = widget.provider.referenceExample;
       return ex != null && ex.isNotEmpty
@@ -160,6 +164,9 @@ class _BillInitiateScreenState extends ConsumerState<BillInitiateScreen> {
                     controller: _reference,
                     hint: p.referenceExample ?? 'N° de compteur / abonné',
                     keyboardType: TextInputType.text,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(kReferenceMaxLength),
+                    ],
                     onChanged: () => setState(() {}),
                   ),
                   if (_referenceError != null) ...[

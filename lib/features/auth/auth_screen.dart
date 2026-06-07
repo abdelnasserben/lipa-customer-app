@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/utils/phone_input_formatter.dart';
+import '../../core/utils/validators.dart';
 import '../../core/widgets/common.dart';
 import '../../core/widgets/lipa_brand.dart';
 import 'login_controller.dart';
@@ -169,8 +170,7 @@ class _LoginFormState extends ConsumerState<_LoginForm> {
   }
 
   bool get _valid =>
-      _phone.text.replaceAll(RegExp(r'\D'), '').length >= 4 &&
-      _pin.text.length >= 4;
+      isValidComorianPhone(_phone.text) && isValidPin(_pin.text);
 
   @override
   Widget build(BuildContext context) {
@@ -366,7 +366,7 @@ class _PinSetupFormState extends ConsumerState<_PinSetupForm> {
   }
 
   bool get _valid =>
-      _pin.text.length >= 4 && _pin.text == _confirm.text;
+      isValidPinSetup(newPin: _pin.text, confirmPin: _confirm.text);
 
   @override
   Widget build(BuildContext context) {
@@ -434,10 +434,9 @@ class _ForgotPinFormState extends ConsumerState<_ForgotPinForm> {
   }
 
   bool get _valid =>
-      _phone.text.replaceAll(RegExp(r'\D'), '').length >= 4 &&
-      _code.length == 6 &&
-      _newPin.text.length >= 4 &&
-      _newPin.text == _confirm.text;
+      isValidComorianPhone(_phone.text) &&
+      isValidTotpCode(_code) &&
+      isValidPinSetup(newPin: _newPin.text, confirmPin: _confirm.text);
 
   @override
   Widget build(BuildContext context) {

@@ -5,6 +5,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/utils/phone_input_formatter.dart';
+import '../../core/utils/validators.dart';
 import '../../core/widgets/common.dart';
 import '../../data/models/transaction.dart';
 import '../customer/customer_providers.dart';
@@ -38,8 +39,10 @@ class _SendRecipientScreenState extends ConsumerState<SendRecipientScreen> {
   }
 
   void _continueWithTyped() {
-    final digits = _phone.text.replaceAll(RegExp(r'\D'), '');
-    if (digits.length < 4) return;
+    final digits = digitsOnly(_phone.text);
+    // Frontal gate: only a complete, operator-valid number proceeds — no API
+    // call for a number the backend could never resolve.
+    if (!isValidComorianPhone(digits)) return;
     final b = Beneficiary(
       customerId: '',
       fullName: fmtPhone('269', digits),
@@ -130,7 +133,12 @@ class _SendRecipientScreenState extends ConsumerState<SendRecipientScreen> {
                       ],
                     ),
                   ),
-                  if (_phone.text.replaceAll(RegExp(r'\D'), '').length >= 4) ...[
+                  if (comorianPhoneError(_phone.text) != null) ...[
+                    const SizedBox(height: 6),
+                    Text(comorianPhoneError(_phone.text)!,
+                        style: AppText.ui(size: 12, color: AppColors.danger)),
+                  ],
+                  if (isValidComorianPhone(_phone.text)) ...[
                     const SizedBox(height: 14),
                     LipaButton(
                       label: 'Continuer',

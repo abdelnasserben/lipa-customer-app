@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/error/api_error.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_tokens.dart';
+import '../../core/utils/validators.dart';
 import '../../core/widgets/common.dart';
 import 'security_controller.dart';
 
@@ -31,17 +32,22 @@ class _ChangePinScreenState extends ConsumerState<ChangePinScreen> {
     super.dispose();
   }
 
-  bool get _valid {
-    final n = _next.text;
-    return _current.text.length >= 4 &&
-        n.length >= 4 &&
-        n.length <= 8 &&
-        n == _confirm.text;
-  }
+  bool get _valid => isValidPinChange(
+        currentPin: _current.text,
+        newPin: _next.text,
+        confirmPin: _confirm.text,
+      );
 
   Future<void> _submit() async {
-    if (_next.text != _confirm.text) {
-      setState(() => _error = 'Les deux PIN ne correspondent pas.');
+    // Re-check frontally so we never spend an API call on a change the backend
+    // would reject (mismatch, same-as-current, bad length).
+    final err = pinChangeError(
+      currentPin: _current.text,
+      newPin: _next.text,
+      confirmPin: _confirm.text,
+    );
+    if (err != null) {
+      setState(() => _error = err);
       return;
     }
     setState(() {
@@ -101,7 +107,7 @@ class _ChangePinScreenState extends ConsumerState<ChangePinScreen> {
                     onChanged: () => setState(() => _error = null),
                   ),
                   const SizedBox(height: 6),
-                  Text('4 à 8 chiffres.',
+                  Text('4 à 8 chiffres, différent du PIN actuel.',
                       style: AppText.ui(size: 12, color: AppColors.inkMid)),
                   if (_error != null) ...[
                     const SizedBox(height: 12),
